@@ -181,17 +181,7 @@ public class Main {
                     }
                 }catch (Exception e){}
                 try{
-                    if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
-                        return true;
-                    }
-                }catch (Exception e){}
-                try{
                     if(feld[i][z].id == feld[i][z - 1].id && feld[i][z].id == feld[i][z - 2].id) {
-                        return true;
-                    }
-                }catch (Exception e){}
-                try{
-                    if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
                         return true;
                     }
                 }catch (Exception e){}
@@ -224,6 +214,68 @@ public class Main {
         return false;
     }
 
+    public class FelderTesten{
+
+        static boolean nachObenTesten(Objekt[][] feld, int i, int z){
+            try{
+                if(feld[i][z].id == feld[i - 1][z].id && feld[i][z].id == feld[i - 2][z].id) {
+                    return true;
+                }
+            }catch (Exception e){}
+            return false;
+        }
+        static boolean nachUntenTesten(Objekt[][] feld, int i, int z){
+            try{
+                if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
+                    return true;
+                }
+            }catch (Exception e){}
+            return false;
+        }
+        static boolean nachRechtsTesten(Objekt[][] feld, int i, int z){
+            try{
+                if(feld[i][z].id == feld[i][z - 1].id && feld[i][z].id == feld[i][z - 2].id) {
+                    return true;
+                }
+            }catch (Exception e){}
+            return false;
+        }
+        static boolean nachLinksTesten(Objekt[][] feld, int i, int z){
+            try{
+                if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
+                    return true;
+                }
+            }catch (Exception e){}
+            return false;
+        }
+        static int anzahlFelder(Objekt[][] feld, int i, int z){
+            if(nachUntenTesten(feld, i, z)){
+                try{
+                    if(feld[i][z].id == feld[i + 3][z].id){
+                        try{
+                            if(feld[i][z].id == feld[i + 4][z].id){
+                                return 5;
+                            }
+                        }catch (Exception e){}
+                        return 4;
+                    }
+                }catch (Exception e){}
+            }
+            if(nachRechtsTesten(feld, i, z)){
+                try{
+                    if(feld[i][z].id == feld[i][z + 3].id){
+                        try{
+                            if(feld[i][z].id == feld[i][z + 4].id){
+                                return 5;
+                            }
+                        }catch (Exception e){}
+                        return 4;
+                    }
+                }catch (Exception e){}
+            }
+            return 3;
+        }
+    }
 
     static Objekt[][] felderEntfernen(Objekt[][] feld){
         Objekt lueckenfueller = new Objekt();
