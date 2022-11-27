@@ -34,9 +34,10 @@ public class Main {
     public static void main(String[] args) {
         Objekt[][] spielfeld;
         Objekt[] objekte = new Objekt[5];
-        int zuege = 2;
+        int zuege ;
         int[] feldZuBewegen1 = new int[2];
         int[] feldZuBewegen2 = new int[2];
+        int zwischenspeicher = 0;
 
         //Objekte initialisieren
         for(int i = 0; i < objekte.length; i++){
@@ -62,32 +63,41 @@ public class Main {
                     break;
             }
         }
+        //Beispiele ausgeben
+        beispieleDrucken();
 
-        System.out.print("Reihen des Spielfeldes: ");
-        spielfeld = new Objekt[input.nextInt()][];
+        //Die Reihen des Spielfeldes bestimmen
+        spielfeld = new Objekt[sichernenIntegerInput("Gib die Reihen des Spielfeldes ein: ")][];
 
-        System.out.print("Spalten des Spielfeldes: ");
-        spielfeld[0] = new Objekt[input.nextInt()];
+        //Die Spalten des Spielfeldes festlegen
+        do{
+            spielfeld[0] = new Objekt[sichernenIntegerInput("Gib die Spalten des Spielfeldes ein: ")];
+            if(spielfeld[0].length > 26){
+                System.out.println("Gib eine Zahl ein, die kleiner als 27 ist!");
+            }
+        }while (spielfeld[0].length > 26);
+
+        //Das gesamte Spielfeld initialisieren
         for(int i = 1; i < spielfeld.length; i++){
             spielfeld[i] = new Objekt[spielfeld[0].length];
         }
-        System.out.print("Wie viele Züge möchtest du haben?: ");
-        try{
-            zuege = input.nextInt();
-        }catch (Exception e){System.out.println("Gib eine Ganzzahl ein!");}
+
+        zuege = sichernenIntegerInput("Gib ein, wie viele Züge du haben möchtest: ");
 
         //Spielfeld initialisieren
         spielfeld = randomSpielfeldGenerieren(spielfeld, objekte);
 
         //Hauptschleife solane der Benutzer noch Züge hat
         while(zuege > 0){
+            //Übriegen Züge und Punkte ausgeben
             System.out.print(zuege + " Züge übrig");
             System.out.println("  " + punkte + "P");
             spielfeldDrucken(spielfeld);
 
+            //Zwei felder zu bewegen vom Benutzer erhalten
             do{
-                feldZuBewegen1 = bewegungAbfragen1();
-                feldZuBewegen2 = bewegungAbfragen2();
+                feldZuBewegen1 = bewegungAbfragen1(spielfeld);
+                feldZuBewegen2 = bewegungAbfragen2(spielfeld);
             }while(!bewegungsmoeglichkeitTesten(spielfeld, feldZuBewegen1, feldZuBewegen2));
 
             spielfeld = zugDurchfuehren(spielfeld, objekte, feldZuBewegen1, feldZuBewegen2);
@@ -99,25 +109,52 @@ public class Main {
         }
     }
 
-    static int[] bewegungAbfragen1(){
-        int[] feldZuBewegen1 = new int[2];
-
-        System.out.print("Welches Feld möchtest du bewegen? Gib als erstes den Buchstaben ein: ");
-        feldZuBewegen1[0] = buchstabeZuZahl(input.next());
-        System.out.print("Gib jetzt die Zahl ein: ");
-        feldZuBewegen1[1] = input.nextInt() - 1;
-
-        return feldZuBewegen1;
-
+    static int sichernenIntegerInput(String nachricht){
+        int zwischenspeicher = 0;
+        while(zwischenspeicher == 0){
+            try{
+                System.out.print(nachricht);
+                zwischenspeicher = input.nextInt();
+            }catch(Exception e){System.out.println("Gib eine Zahl ein!"); input.nextLine();}
+        }
+        return zwischenspeicher;
     }
 
-    static  int[] bewegungAbfragen2(){
-        int[] feldZuBewegen2 = new int[2];
+    static String sicherenBuchstabenInput(String nachricht){
+        String zwischenspeicher = "";
+        while(zwischenspeicher.length() != 1){
+            try{
+                System.out.print(nachricht);
+                zwischenspeicher = input.nextLine();
+            }catch(Exception e){System.out.println("Gib einen Text"); input.nextLine();}
+            try{
+                int zwischenspeicherInt = Integer.parseInt(zwischenspeicher);
+                zwischenspeicher = "";
+            }catch(Exception e){}
+        }
+        return zwischenspeicher;
+    }
 
-        System.out.print("Mit welchem Feld soll getauscht werden? Gib als erstes den Buchstaben ein: ");
-        feldZuBewegen2[0] = buchstabeZuZahl(input.next());
-        System.out.print("Gib jetzt die Zahl ein: ");
-        feldZuBewegen2[1] = input.nextInt() - 1;
+    static int[] bewegungAbfragen1(Objekt[][] feld){
+        int[] feldZuBewegen1 = new int[2];
+        do{
+            feldZuBewegen1[0] = buchstabeZuZahl(sicherenBuchstabenInput("Welches Feld möchtest du bewegen? Gib als erstes den Buchstaben ein: "));
+        }while(feldZuBewegen1[0] > feld[0].length);
+        do{
+            feldZuBewegen1[1] = sichernenIntegerInput("Gib jetzt die Zahl ein: ") - 1;
+        }while(feldZuBewegen1[0] > feld.length);
+
+        return feldZuBewegen1;
+    }
+
+    static  int[] bewegungAbfragen2(Objekt[][] feld){
+        int[] feldZuBewegen2 = new int[2];
+        do{
+            feldZuBewegen2[0] = buchstabeZuZahl(sicherenBuchstabenInput("Mit welchem Feld soll getauscht werden? Gib als erstes den Buchstaben ein: "));
+        }while(feldZuBewegen2[0] > feld[0].length);
+        do{
+            feldZuBewegen2[1] = sichernenIntegerInput("Gib jetzt die Zahl ein: ") - 1;
+        }while(feldZuBewegen2[0] > feld.length);
 
         return feldZuBewegen2;
     }
@@ -134,38 +171,32 @@ public class Main {
         return false;
     }
 
-    static boolean mindestensDreierReihe(Objekt[][] feld, int[] feldTauschen){
+    static boolean mindestensDreierReihe(Objekt[][] feld){
         //Nach oben, unten, rechts, links, mittig waagerecht, mittig senkrecht überprüfen, ob es eine dreierreihe ergibt, wenn die Werte über 2 sind
-        try{
-            if(feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1] - 1][feldTauschen[0]].id && feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1] - 2][feldTauschen[0]].id) {
-                return true;
+        for(int i = 0; i < feld.length; i++) {
+            for (int z = 0; z < feld[0].length; z++) {
+                try{
+                    if(feld[i][z].id == feld[i - 1][z].id && feld[i][z].id == feld[i - 2][z].id) {
+                        return true;
+                    }
+                }catch (Exception e){}
+                try{
+                    if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
+                        return true;
+                    }
+                }catch (Exception e){}
+                try{
+                    if(feld[i][z].id == feld[i][z - 1].id && feld[i][z].id == feld[i][z - 2].id) {
+                        return true;
+                    }
+                }catch (Exception e){}
+                try{
+                    if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
+                        return true;
+                    }
+                }catch (Exception e){}
             }
-        }catch (Exception e){}
-        try{
-            if(feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1] + 1][feldTauschen[0]].id && feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1] + 2][feldTauschen[0]].id) {
-                return true;
-            }
-        }catch (Exception e){}
-        try{
-            if(feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1]][feldTauschen[0] + 1].id && feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1]][feldTauschen[0] + 2].id) {
-                return true;
-            }
-        }catch (Exception e){}
-        try{
-            if(feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1]][feldTauschen[0] - 1].id && feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1]][feldTauschen[0] - 2].id) {
-                return true;
-            }
-        }catch (Exception e){}
-        try{
-            if(feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1] - 1][feldTauschen[0]].id && feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1] + 1][feldTauschen[0]].id) {
-                return true;
-            }
-        }catch (Exception e){}
-        try{
-            if(feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1]][feldTauschen[0] - 1].id && feld[feldTauschen[1]][feldTauschen[0]].id == feld[feldTauschen[1]][feldTauschen[0] + 1].id) {
-                return true;
-            }
-        }catch (Exception e){}
+        }
 
         return false;
     }
@@ -180,7 +211,7 @@ public class Main {
         zwischenspeicher = feld[feldTauschen1[1]][feldTauschen1[0]];
         feld[feldTauschen1[1]][feldTauschen1[0]] = feld[feldTauscehn2[1]][feldTauscehn2[0]];
         feld[feldTauscehn2[1]][feldTauscehn2[0]] = zwischenspeicher;
-        if(mindestensDreierReihe(feld, feldTauschen1) || mindestensDreierReihe(feld, feldTauscehn2)){
+        if(mindestensDreierReihe(feld)){
             zwischenspeicher = feld[feldTauschen1[1]][feldTauschen1[0]];
             feld[feldTauschen1[1]][feldTauschen1[0]] = feld[feldTauscehn2[1]][feldTauscehn2[0]];
             feld[feldTauscehn2[1]][feldTauscehn2[0]] = zwischenspeicher;
@@ -193,6 +224,7 @@ public class Main {
         return false;
     }
 
+
     static Objekt[][] felderEntfernen(Objekt[][] feld){
         Objekt lueckenfueller = new Objekt();
         lueckenfueller.text = " ";
@@ -202,16 +234,68 @@ public class Main {
             for(int z = 0; z < feld[0].length; z++){
                 try{
                     if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id){
+
                         if(i < feld.length - 4){
                             if(feld[i][z].id == feld[i + 3][z].id) {
                                 feld[i + 3][z] = lueckenfueller;
                                 if(i < feld.length - 5) {
                                     if (feld[i][z].id == feld[i + 4][z].id) {
+
+                                        try{
+                                            if(feld[i + 2][z].id == feld[i + 2][z + 1].id){
+                                                feld[i + 2][z + 1] = lueckenfueller;
+                                                if(feld[i + 2][z].id == feld[i + 2][z + 2].id){
+                                                    feld[i + 2][z + 2] = lueckenfueller;
+                                                }
+                                            }
+                                        }catch (Exception e){}
+
+                                        try{
+                                            if(feld[i + 2][z].id == feld[i + 2][z - 1].id){
+                                                feld[i + 2][z - 1] = lueckenfueller;
+                                                if(feld[i + 2][z].id == feld[i + 2][z - 2].id){
+                                                    feld[i + 2][z - 2] = lueckenfueller;
+                                                }
+                                            }
+                                        }catch (Exception e){}
+
                                         feld[i + 4][z] = lueckenfueller;
                                     }
                                 }
                             }
                         }
+                        try{
+                            if(feld[i][z].id == feld[i][z + 1].id){
+                                feld[i][z + 1] = lueckenfueller;
+                                if(feld[i][z].id == feld[i][z + 2].id){
+                                    feld[i][z + 2] = lueckenfueller;
+                                }
+                            }
+                        }catch (Exception e){}
+                        try{
+                            if(feld[i][z].id == feld[i][z - 1].id){
+                                feld[i][z - 1] = lueckenfueller;
+                                if(feld[i][z].id == feld[i][z - 2].id){
+                                    feld[i][z - 2] = lueckenfueller;
+                                }
+                            }
+                        }catch (Exception e){}
+                        try{
+                            if(feld[i][z].id == feld[i][z + 1].id){
+                                feld[i][z + 1] = lueckenfueller;
+                                if(feld[i][z].id == feld[i][z + 2].id){
+                                    feld[i][z + 2] = lueckenfueller;
+                                }
+                            }
+                        }catch (Exception e){}
+                        try{
+                            if(feld[i][z].id == feld[i][z - 1].id){
+                                feld[i][z - 1] = lueckenfueller;
+                                if(feld[i][z].id == feld[i][z - 2].id){
+                                    feld[i][z - 2] = lueckenfueller;
+                                }
+                            }
+                        }catch (Exception e){}
                         feld[i][z] = lueckenfueller;
                         feld[i + 1][z] = lueckenfueller;
                         feld[i + 2][z] = lueckenfueller;
@@ -272,38 +356,10 @@ public class Main {
         return feld;
     }
 
-    static boolean weitereZuegeMoeglich(Objekt[][] feld){
-        for(int i = 0; i < feld.length; i++) {
-            for (int z = 0; z < feld[0].length; z++) {
-                try{
-                    if(feld[i][z].id == feld[i - 1][z].id && feld[i][z].id == feld[i - 2][z].id) {
-                        return true;
-                    }
-                }catch (Exception e){}
-                try{
-                    if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
-                        return true;
-                    }
-                }catch (Exception e){}
-                try{
-                    if(feld[i][z].id == feld[i][z - 1].id && feld[i][z].id == feld[i][z - 2].id) {
-                        return true;
-                    }
-                }catch (Exception e){}
-                try{
-                    if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
-                        return true;
-                    }
-                }catch (Exception e){}
-            }
-        }
-
-        return false;
-    }
 
     static Objekt[][] zugDurchfuehren(Objekt[][] feld, Objekt[] objekte, int[] feldTauschen1, int[] feldTauschen2){
         spielfeldAktualisieren(feld, feldTauschen1, feldTauschen2);
-        while(weitereZuegeMoeglich(feld)){
+        while(mindestensDreierReihe(feld)){
             feld = felderEntfernen(feld);
             feld = felderSenkenUndAusfuellen(feld, objekte);
             spielfeldDrucken(feld);
@@ -375,6 +431,22 @@ public class Main {
             }
             System.out.println();
         }
+    }
+
+    static void beispieleDrucken(){
+        System.out.println("Beispiele für Kombinationsmöglichkeiten. Es geht immer bis maximal eine Länge von 5.");
+        System.out.println(" O  O  O");
+        System.out.println();
+        System.out.println(" O");
+        System.out.println(" O");
+        System.out.println(" O");
+        System.out.println();
+        System.out.println(" O");
+        System.out.println(" O  O  O");
+        System.out.println(" O");
+        System.out.println();
+        System.out.println("       O");
+        System.out.println(" O  O  O  O  O");
     }
 
     static String zahlZuBuchstabe(int zahl){
@@ -496,6 +568,59 @@ public class Main {
             case "Y": zahl = 24;
                 break;
             case "Z": zahl = 25;
+                break;
+
+            case "a": zahl = 0;
+                break;
+            case "b": zahl = 1;
+                break;
+            case "c": zahl = 2;
+                break;
+            case "d": zahl = 3;
+                break;
+            case "e": zahl = 4;
+                break;
+            case "f": zahl = 5;
+                break;
+            case "g": zahl = 6;
+                break;
+            case "h": zahl = 7;
+                break;
+            case "i": zahl = 8;
+                break;
+            case "j": zahl = 9;
+                break;
+            case "k": zahl = 10;
+                break;
+            case "l": zahl = 11;
+                break;
+            case "m": zahl = 12;
+                break;
+            case "n": zahl = 13;
+                break;
+            case "o": zahl = 14;
+                break;
+            case "p": zahl = 15;
+                break;
+            case "q": zahl = 16;
+                break;
+            case "r": zahl = 17;
+                break;
+            case "s": zahl = 18;
+                break;
+            case "t": zahl = 19;
+                break;
+            case "u": zahl = 20;
+                break;
+            case "v": zahl = 21;
+                break;
+            case "w": zahl = 22;
+                break;
+            case "x": zahl = 23;
+                break;
+            case "y": zahl = 24;
+                break;
+            case "z": zahl = 25;
                 break;
             default:
                 zahl = 0;
