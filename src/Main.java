@@ -564,8 +564,9 @@ public class Main {
         }
         return buchstabe;
     }
-
+    
     static int buchstabeZuZahl(String buchstabe){
+        buchstabe = buchstabe.toUpperCase();
         int zahl;
 
         switch(buchstabe){
@@ -620,59 +621,6 @@ public class Main {
             case "Y": zahl = 24;
                 break;
             case "Z": zahl = 25;
-                break;
-
-            case "a": zahl = 0;
-                break;
-            case "b": zahl = 1;
-                break;
-            case "c": zahl = 2;
-                break;
-            case "d": zahl = 3;
-                break;
-            case "e": zahl = 4;
-                break;
-            case "f": zahl = 5;
-                break;
-            case "g": zahl = 6;
-                break;
-            case "h": zahl = 7;
-                break;
-            case "i": zahl = 8;
-                break;
-            case "j": zahl = 9;
-                break;
-            case "k": zahl = 10;
-                break;
-            case "l": zahl = 11;
-                break;
-            case "m": zahl = 12;
-                break;
-            case "n": zahl = 13;
-                break;
-            case "o": zahl = 14;
-                break;
-            case "p": zahl = 15;
-                break;
-            case "q": zahl = 16;
-                break;
-            case "r": zahl = 17;
-                break;
-            case "s": zahl = 18;
-                break;
-            case "t": zahl = 19;
-                break;
-            case "u": zahl = 20;
-                break;
-            case "v": zahl = 21;
-                break;
-            case "w": zahl = 22;
-                break;
-            case "x": zahl = 23;
-                break;
-            case "y": zahl = 24;
-                break;
-            case "z": zahl = 25;
                 break;
             default:
                 zahl = 0;
