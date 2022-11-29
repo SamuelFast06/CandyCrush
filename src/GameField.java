@@ -1,6 +1,7 @@
 public class GameField {
     private static Token[][] gamefield;
     private static  Token[] tokens;
+    private static int points = 0;
 
 
     public GameField(){
@@ -18,12 +19,25 @@ public class GameField {
         GameField.tokens = tokens;
     }
 
+    public static void setPoints(int points){
+        GameField.points = points;
+    }
+
+    public static int getPoints(){
+        return points;
+    }
+
     public static void setRows(){
         GameField.gamefield = new Token[Additional.getSafeInteger("Gib die Reihen des Spielfeldes ein: ")][];
     }
 
     public static void setCollums(){
-        GameField.gamefield[0] = new Token[Additional.getSafeInteger("Gib die Spalten des Spielfeldes ein: ")];
+        do{
+            GameField.gamefield[0] = new Token[Additional.getSafeInteger("Gib die Spalten des Spielfeldes ein: ")];
+            if(gamefield[0].length > 26){
+                System.out.println("Die Zahl muss kleiner als 27 sein!");
+            }
+        }while(gamefield[0].length > 26);
     }
 
     public void initalizeTokens(int length){
@@ -296,8 +310,6 @@ public class GameField {
     public static void lowerAndFillFields(){
         Token gapFiller = new Token(-1, " ");
 
-
-        //Felder senken
         for(int i = 0; i < gamefield.length; i++) {
             for (int z = 0; z < gamefield[0].length; z++) {
                 if(gamefield[i][z].getId() == -1){
@@ -314,7 +326,7 @@ public class GameField {
             for (int z = 0; z < gamefield[0].length; z++) {
                 if(gamefield[i][z].getId() == -1){
                     // Punkte hinzufügen
-                    Main.punkte++;
+                    points++;
 
                     gamefield[i][z] = tokens[Additional.random.nextInt(5)];
                 }

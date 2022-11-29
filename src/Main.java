@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class Main {
-    static int punkte = 0;
 
     public static void main(String[] args) {
         GameField gameField = new GameField();
@@ -9,36 +8,24 @@ public class Main {
         int moves;
         int[] swapFields1 = new int[2];
         int[] swapFields2 = new int[2];
-        int zwischenspeicher = 0;
 
-        //Objekte initialisieren
         gameField.initalizeTokens(5);
-        //Beispiele ausgeben
         Additional.printExample();
 
-        //Die Reihen des Spielfeldes bestimmen
         gameField.setRows();
-        //Die Spalten des Spielfeldes festlegen
-        do {
-            gameField.setCollums();
-            if (gameField.getGamefield()[0].length > 26) {
-                System.out.println("Gib eine Zahl ein, die kleiner als 27 ist!");
-            }
-        } while (gameField.getGamefield()[0].length > 26);
+        gameField.setCollums();
 
-        //Das gesamte Spielfeld initialisieren
         gameField.initializeGamefield();
 
         moves = Additional.getSafeInteger("Gib ein, wie viele Züge du haben möchtest: ");
 
-        //Spielfeld initialisieren
         gameField.generateRandomGamefield();
 
         //Hauptschleife solane der Benutzer noch Züge hat
         while (moves > 0) {
             //Übriegen Züge und Punkte ausgeben
             System.out.print(moves + " Züge übrig");
-            System.out.println("  " + punkte + "P");
+            System.out.println("  " + gameField.getPoints() + "P");
             gameField.printGamefield();
 
             //Zwei felder zu bewegen vom Benutzer erhalten

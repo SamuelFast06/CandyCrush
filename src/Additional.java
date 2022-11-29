@@ -11,23 +11,27 @@ public class Additional {
             try{
                 System.out.print(nachricht);
                 cache = input.nextInt();
-            }catch(Exception e){System.out.println("Gib eine Zahl ein!");}
+            }catch(Exception e){System.out.println("Gib eine Zahl ein!");input.nextLine();}
         }
         return cache;
     }
 
-    public static String getSafeLetter(String nachricht){
-        String cache = "";
-        while(cache.length() != 1){
+    public static char getSafeLetter(String nachricht){
+        char cache = '#';
+        while (!tryLetter(cache)) {
+
+            if(tryLetter(cache)){
+                System.out.println("Debug Info1");
+            }else{
+                System.out.println("Debug Info2");
+            }
             try{
                 System.out.print(nachricht);
-                cache = input.nextLine();
-            }catch(Exception e){System.out.println("Gib einen Text");}
-            try{
-                int zwischenspeicherInt = Integer.parseInt(cache);
-                cache = "";
-            }catch(Exception e){}
+                cache = input.next().charAt(0);
+                cache = Character.toUpperCase(cache);
+            }catch(Exception e){System.out.println("Gib einen Buchstaben ein!");input.nextLine();}
         }
+
         return cache;
     }
 
@@ -47,74 +51,49 @@ public class Additional {
         System.out.println(" O  O  O  O  O");
     }
 
-    public static String numberToLetter(int zahl){
-        String letter;
+    public static char numberToLetter(int number){
+        char letter;
+        char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        letter = letters[number];
 
-        switch(zahl){
-            case 0: letter = "A";
-                break;
-            case 1: letter = "B";
-                break;
-            case 2: letter = "C";
-                break;
-            case 3: letter = "D";
-                break;
-            case 4: letter = "E";
-                break;
-            case 5: letter = "F";
-                break;
-            case 6: letter = "G";
-                break;
-            case 7: letter = "H";
-                break;
-            case 8: letter = "I";
-                break;
-            case 9: letter = "J";
-                break;
-            case 10: letter = "K";
-                break;
-            case 11: letter = "L";
-                break;
-            case 12: letter = "M";
-                break;
-            case 13: letter = "N";
-                break;
-            case 14: letter = "O";
-                break;
-            case 15: letter = "P";
-                break;
-            case 16: letter = "Q";
-                break;
-            case 17: letter = "R";
-                break;
-            case 18: letter = "S";
-                break;
-            case 19: letter = "T";
-                break;
-            case 20: letter = "U";
-                break;
-            case 21: letter = "V";
-                break;
-            case 22: letter = "W";
-                break;
-            case 23: letter = "X";
-                break;
-            case 24: letter = "Y";
-                break;
-            case 25: letter = "Z";
-                break;
-            default:
-                letter = "";
-                System.out.println("Ein Fehler ist passiert");
-                break;
-        }
         return letter;
     }
 
-    public static int letterToNumber(String buchstabe){
-        int number;
+    public static boolean tryLetter(char letter){
+        char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        for(int i = 0; i < letters.length; i++){
+            System.out.println(letter + " " +  letters[i]);
+            if(letter == letters[i]){
+                return true;
+            }
+        }
+        return false;
+    }
 
-        switch(buchstabe){
+    public static boolean tryLetterToNumber(char letter){
+        letter = Character.toUpperCase(letter);
+        int number;
+        char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        for(int i = 0; i < letters.length; i++){
+            if(letter == letters[i]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static int letterToNumber(char letter){
+        letter = Character.toUpperCase(letter);
+        int number;
+        char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        for(int i = 0; i < letters.length; i++){
+            if(letters[i] == letter){
+                return letters[i];
+            }
+        }
+        return 0;
+
+        /*switch(buchstabe){
             case "A": number = 0;
                 break;
             case "B": number = 1;
@@ -224,8 +203,7 @@ public class Additional {
                 number = 0;
                 System.out.println("Ein Fehler ist passiert");
                 break;
-        }
-        return number;
+        }*/
     }
 
 }
