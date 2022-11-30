@@ -77,10 +77,10 @@ public class GameField {
         int[] feldZuBewegen1 = new int[2];
         do{
             feldZuBewegen1[0] = Additional.letterToNumber(Additional.getSafeLetter("Welches Feld möchtest du bewegen? Gib als erstes den Buchstaben ein: "));
-        }while(feldZuBewegen1[0] > gamefield[0].length);
+        }while(feldZuBewegen1[0] > gamefield[0].length - 1);
         do{
             feldZuBewegen1[1] = Additional.getSafeInteger("Gib jetzt die Zahl ein: ") - 1;
-        }while(feldZuBewegen1[0] > gamefield.length);
+        }while(feldZuBewegen1[1] > gamefield.length - 1);
 
         return feldZuBewegen1;
     }
@@ -89,10 +89,10 @@ public class GameField {
         int[] feldZuBewegen2 = new int[2];
         do{
             feldZuBewegen2[0] = Additional.letterToNumber(Additional.getSafeLetter("Mit welchem Feld soll getauscht werden? Gib als erstes den Buchstaben ein: "));
-        }while(feldZuBewegen2[0] > gamefield[0].length);
+        }while(feldZuBewegen2[0] > gamefield[0].length - 1);
         do{
             feldZuBewegen2[1] = Additional.getSafeInteger("Gib jetzt die Zahl ein: ") - 1;
-        }while(feldZuBewegen2[0] > gamefield.length);
+        }while(feldZuBewegen2[0] > gamefield.length - 1);
 
         return feldZuBewegen2;
     }

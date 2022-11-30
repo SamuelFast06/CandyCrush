@@ -23,6 +23,8 @@ public class Main {
 
         //Hauptschleife solane der Benutzer noch Züge hat
         while (moves > 0) {
+            //Spielfeld reseten
+            Additional.clearConsole();
             //Übriegen Züge und Punkte ausgeben
             System.out.print(moves + " Züge übrig");
             System.out.println("  " + gameField.getPoints() + "P");
