@@ -1,37 +1,37 @@
 public class GameField {
     private static Token[][] gamefield;
-    private static  Token[] tokens;
+    private static Token[] tokens;
     private static int points = 0;
 
 
     public GameField(){
     }
 
-    public static void setGamefield(Token[][] gamefield) {
+    public void setGamefield(Token[][] gamefield) {
         GameField.gamefield = gamefield;
     }
 
-    public static Token[][] getGamefield(){
+    public Token[][] getGamefield(){
         return gamefield;
     }
 
-    public static void setTokens(Token[] tokens) {
+    public void setTokens(Token[] tokens) {
         GameField.tokens = tokens;
     }
 
-    public static void setPoints(int points){
+    public void setPoints(int points){
         GameField.points = points;
     }
 
-    public static int getPoints(){
+    public int getPoints(){
         return points;
     }
 
-    public static void setRows(){
+    public void setRows(){
         GameField.gamefield = new Token[Additional.getSafeInteger("Gib die Reihen des Spielfeldes ein: ")][];
     }
 
-    public static void setCollums(){
+    public void setCollums(){
         do{
             GameField.gamefield[0] = new Token[Additional.getSafeInteger("Gib die Spalten des Spielfeldes ein: ")];
             if(gamefield[0].length > 26){
@@ -67,13 +67,13 @@ public class GameField {
         }
     }
 
-    public static void initializeGamefield(){
+    public void initializeGamefield(){
         for (int i = 1; i < gamefield.length; i++) {
             gamefield[i] = new Token[gamefield[0].length];
         }
     }
 
-    public static int[] askMove1(){
+    public int[] askMove1(){
         int[] feldZuBewegen1 = new int[2];
         do{
             feldZuBewegen1[0] = Additional.letterToNumber(Additional.getSafeLetter("Welches Feld möchtest du bewegen? Gib als erstes den Buchstaben ein: "));
@@ -85,7 +85,7 @@ public class GameField {
         return feldZuBewegen1;
     }
 
-    public static int[] askMove2(){
+    public int[] askMove2(){
         int[] feldZuBewegen2 = new int[2];
         do{
             feldZuBewegen2[0] = Additional.letterToNumber(Additional.getSafeLetter("Mit welchem Feld soll getauscht werden? Gib als erstes den Buchstaben ein: "));
@@ -97,7 +97,7 @@ public class GameField {
         return feldZuBewegen2;
     }
 
-    public static boolean tryNextToEachOther(int[] swapFields1, int[] swapFields2){
+    public boolean tryNextToEachOther(int[] swapFields1, int[] swapFields2){
         try{
             if(swapFields1[1] == (swapFields2[1] - 1) || swapFields1[1] == (swapFields2[1] + 1) || swapFields1[0] == (swapFields2[0] - 1) || swapFields1[0] == (swapFields2[0] + 1)){
                 return true;
@@ -109,17 +109,17 @@ public class GameField {
         return false;
     }
 
-    public static boolean rowOfThree(){
+    public boolean rowOfThree(Token[][] field){
         //Nach oben, unten, rechts, links, mittig waagerecht, mittig senkrecht überprüfen, ob es eine dreierreihe ergibt, wenn die Werte über 2 sind
-        for(int i = 0; i < gamefield.length; i++) {
-            for (int z = 0; z < gamefield[0].length; z++) {
+        for(int i = 0; i < field.length; i++) {
+            for (int z = 0; z < field[0].length; z++) {
                 try{
-                    if(gamefield[i][z].getId() == gamefield[i - 1][z].getId() && gamefield[i][z].getId() == gamefield[i - 2][z].getId()) {
+                    if(field[i][z].getId() == field[i - 1][z].getId() && field[i][z].getId() == field[i - 2][z].getId()) {
                         return true;
                     }
                 }catch (Exception e){}
                 try{
-                    if(gamefield[i][z].getId() == gamefield[i][z - 1].getId() && gamefield[i][z].getId() == gamefield[i][z - 2].getId()) {
+                    if(field[i][z].getId() == field[i][z - 1].getId() && field[i][z].getId() == field[i][z - 2].getId()) {
                         return true;
                     }
                 }catch (Exception e){}
@@ -129,185 +129,201 @@ public class GameField {
         return false;
     }
 
-    public static boolean testMoves(int[] swapFields1, int[] swapFields2){
-        Token zwischenspeicher;
+    public boolean testMoves(int[] swapFields1, int[] swapFields2){
+        Token cache;
 
         if(!tryNextToEachOther(swapFields1, swapFields2)) {
             System.out.println("Die Felder liegen nicht nebeneinander");
             return false;
         }
-        zwischenspeicher = gamefield[swapFields1[1]][swapFields1[0]];
+        cache = gamefield[swapFields1[1]][swapFields1[0]];
         gamefield[swapFields1[1]][swapFields1[0]] = gamefield[swapFields2[1]][swapFields2[0]];
-        gamefield[swapFields2[1]][swapFields2[0]] = zwischenspeicher;
-        if(rowOfThree()){
-            zwischenspeicher = gamefield[swapFields1[1]][swapFields1[0]];
+        gamefield[swapFields2[1]][swapFields2[0]] = cache;
+        if(rowOfThree(gamefield)){
+            cache = gamefield[swapFields1[1]][swapFields1[0]];
             gamefield[swapFields1[1]][swapFields1[0]] = gamefield[swapFields2[1]][swapFields2[0]];
-            gamefield[swapFields2[1]][swapFields2[0]] = zwischenspeicher;
+            gamefield[swapFields2[1]][swapFields2[0]] = cache;
             return true;
         }
-        zwischenspeicher = gamefield[swapFields1[1]][swapFields1[0]];
+        cache = gamefield[swapFields1[1]][swapFields1[0]];
         gamefield[swapFields1[1]][swapFields1[0]] = gamefield[swapFields2[1]][swapFields2[0]];
-        gamefield[swapFields2[1]][swapFields2[0]] = zwischenspeicher;
+        gamefield[swapFields2[1]][swapFields2[0]] = cache;
         System.out.println("Die Felder ergeben keine Dreierreihe");
         return false;
     }
 
-        /*static boolean nachObenTesten(Main.Objekt[][] feld, int i, int z){
-            try{
-                if(feld[i][z].id == feld[i - 1][z].id && feld[i][z].id == feld[i - 2][z].id) {
-                    return true;
-                }
-            }catch (Exception e){}
-            return false;
-        }
-        static boolean nachUntenTesten(Main.Objekt[][] feld, int i, int z){
-            try{
-                if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
-                    return true;
-                }
-            }catch (Exception e){}
-            return false;
-        }
-        static boolean nachRechtsTesten(Main.Objekt[][] feld, int i, int z){
-            try{
-                if(feld[i][z].id == feld[i][z - 1].id && feld[i][z].id == feld[i][z - 2].id) {
-                    return true;
-                }
-            }catch (Exception e){}
-            return false;
-        }
-        static boolean nachLinksTesten(Main.Objekt[][] feld, int i, int z){
-            try{
-                if(feld[i][z].id == feld[i + 1][z].id && feld[i][z].id == feld[i + 2][z].id) {
-                    return true;
-                }
-            }catch (Exception e){}
-            return false;
-        }
-        static int anzahlFelder(Main.Objekt[][] feld, int i, int z){
-            if(nachUntenTesten(feld, i, z)){
-                try{
-                    if(feld[i][z].id == feld[i + 3][z].id){
-                        try{
-                            if(feld[i][z].id == feld[i + 4][z].id){
-                                return 5;
+    private int verticalLine(int i, int z, String direction) {
+        if(direction.equals("down")){
+            try {
+                if (gamefield[i][z].getId() == gamefield[i + 1][z].getId() && gamefield[i][z].getId() == gamefield[i + 2][z].getId()) {
+                    if (i <= gamefield.length - 4) {
+                        if (gamefield[i][z].getId() == gamefield[i + 3][z].getId()) {
+                            if (i <= gamefield.length - 5) {
+                                if (gamefield[i][z].getId() == gamefield[i + 4][z].getId()) {
+                                    return 5;
+                                }
                             }
-                        }catch (Exception e){}
-                        return 4;
+                            return 4;
+                        }
                     }
-                }catch (Exception e){}
-            }
-            if(nachRechtsTesten(feld, i, z)){
-                try{
-                    if(feld[i][z].id == feld[i][z + 3].id){
-                        try{
-                            if(feld[i][z].id == feld[i][z + 4].id){
-                                return 5;
+                    return 3;
+                }
+            } catch (Exception e) {}
+        }else{
+            try {
+                if (gamefield[i][z].getId() == gamefield[i - 1][z].getId() && gamefield[i][z].getId() == gamefield[i - 2][z].getId()) {
+                    if (i < gamefield.length + 4) {
+                        if (gamefield[i][z].getId() == gamefield[i - 3][z].getId()) {
+                            if (i < gamefield.length + 5) {
+                                if (gamefield[i][z].getId() == gamefield[i - 4][z].getId()) {
+                                    return 5;
+                                }
+                                return 4;
                             }
-                        }catch (Exception e){}
-                        return 4;
+                        }
                     }
-                }catch (Exception e){}
-            }
-            return 3;
-        }*/
+                    return 3;
+                }
+            } catch (Exception e) {}
+        }
 
-    public static void deleteFields(){
+        return 0;
+    }
+
+    private int horizontalLine(int i, int z, String direction){
+        if(direction.equals("right")){
+            try{
+                if(gamefield[i][z].getId() == gamefield[i][z + 1].getId() && gamefield[i][z].getId() == gamefield[i][z + 2].getId()){
+                    if(z < gamefield[i].length - 4){
+                        if(gamefield[i][z].getId() == gamefield[i][z + 3].getId()) {
+                            if(z < gamefield[i].length - 5){
+                                if(gamefield[i][z].getId() == gamefield[i][z + 4].getId()){
+                                    return 5;
+                                }
+                                return 4;
+                            }
+                        }
+                    }
+                    return 3;
+                }
+            }catch (Exception e){}
+        }else{
+            try{
+                if(gamefield[i][z].getId() == gamefield[i][z - 1].getId() && gamefield[i][z].getId() == gamefield[i][z - 2].getId()){
+                    if(z < gamefield[i].length + 4){
+                        if(gamefield[i][z].getId() == gamefield[i][z - 3].getId()) {
+                            if(z < gamefield[i].length + 5){
+                                if(gamefield[i][z].getId() == gamefield[i][z - 4].getId()){
+                                    return 5;
+                                }
+                                return 4;
+                            }
+                        }
+                    }
+                    return 3;
+                }
+            }catch (Exception e){}
+        }
+
+
+        return 0;
+    }
+
+    public void deleteFields(){
+        int cache;
         Token gapFiller = new Token(-1, " ");
 
         for(int i = 0; i < gamefield.length; i++){
             for(int z = 0; z < gamefield[0].length; z++){
                 try{
-                    if(gamefield[i][z].getId() == gamefield[i + 1][z].getId() && gamefield[i][z].getId() == gamefield[i + 2][z].getId()){
-
-                        if(i < gamefield.length - 4){
-                            if(gamefield[i][z].getId() == gamefield[i + 3][z].getId()) {
-                                gamefield[i + 3][z] = gapFiller;
-                                if(i < gamefield.length - 5) {
-                                    if (gamefield[i][z].getId() == gamefield[i + 4][z].getId()) {
-
-                                        try{
-                                            if(gamefield[i + 2][z].getId() == gamefield[i + 2][z + 1].getId()){
-                                                gamefield[i + 2][z + 1] = gapFiller;
-                                                if(gamefield[i + 2][z].getId() == gamefield[i + 2][z + 2].getId()){
-                                                    gamefield[i + 2][z + 2] = gapFiller;
-                                                }
-                                            }
-                                        }catch (Exception e){}
-
-                                        try{
-                                            if(gamefield[i + 2][z].getId() == gamefield[i + 2][z - 1].getId()){
-                                                gamefield[i + 2][z - 1] = gapFiller;
-                                                if(gamefield[i + 2][z].getId() == gamefield[i + 2][z - 2].getId()){
-                                                    gamefield[i + 2][z - 2] = gapFiller;
-                                                }
-                                            }
-                                        }catch (Exception e){}
-
-                                        gamefield[i + 4][z] = gapFiller;
-                                    }
+                    if(verticalLine(i, z, "down") > 2){
+                        if(verticalLine(i, z, "down") == 5){
+                            if(horizontalLine(i + 2,z, "left") == 3){
+                                for(int g = 0; g < 3; g++){
+                                    gamefield[i + g][z] = gapFiller;
                                 }
+                                gamefield[i + 2][z - 1] = gapFiller;
+                                gamefield[i + 2][z - 2] = gapFiller;
+                                return;
+                            }
+                            if(horizontalLine(i + 2,z, "right") == 3){
+                                for(int g = 0; g < 3; g++){
+                                    gamefield[i + g][z] = gapFiller;
+                                }
+                                gamefield[i + 2][z + 1] = gapFiller;
+                                gamefield[i + 2][z + 2] = gapFiller;
+                                return;
+                            }
+
+                        } else if (verticalLine(i, z, "down") == 3) {
+                            if(horizontalLine(i + 2, z, "left") == 3){
+                                for(int g = 0; g < 3;g++){
+                                    gamefield[i + g][z] = gapFiller;
+                                    gamefield[i + 2][z - g] = gapFiller;
+                                }
+                                return;
+                            }
+                            if(horizontalLine(i + 2, z, "right") == 3){
+                                for(int g = 0; g < 3;g++){
+                                    gamefield[i + g][z] = gapFiller;
+                                    gamefield[i + 2][z + g] = gapFiller;
+                                }
+                                return;
+                            }
+                            if(horizontalLine(i, z, "right") == 3){
+                                for(int g = 0; g < 3;g++){
+                                    gamefield[i + g][z] = gapFiller;
+                                    gamefield[i][z + g] = gapFiller;
+                                }
+                                return;
+                            }
+                            if(horizontalLine(i + 2, z - 2, "right") == 5){
+                                for(int g = 0; g < 5; g++){
+                                    gamefield[i + 2][z - 2 + g] = gapFiller;
+                                }
+                                gamefield[i][z] = gapFiller;
+                                gamefield[i - 1][z] = gapFiller;
+                                return;
                             }
                         }
-                        try{
-                            if(gamefield[i][z].getId() == gamefield[i][z + 1].getId()){
-                                gamefield[i][z + 1] = gapFiller;
-                                if(gamefield[i][z].getId() == gamefield[i][z + 2].getId()){
-                                    gamefield[i][z + 2] = gapFiller;
-                                }
-                            }
-                        }catch (Exception e){}
-                        try{
-                            if(gamefield[i][z].getId() == gamefield[i][z - 1].getId()){
-                                gamefield[i][z - 1] = gapFiller;
-                                if(gamefield[i][z].getId() == gamefield[i][z - 2].getId()){
-                                    gamefield[i][z - 2] = gapFiller;
-                                }
-                            }
-                        }catch (Exception e){}
-                        try{
-                            if(gamefield[i][z].getId() == gamefield[i][z + 1].getId()){
-                                gamefield[i][z + 1] = gapFiller;
-                                if(gamefield[i][z].getId() == gamefield[i][z + 2].getId()){
-                                    gamefield[i][z + 2] = gapFiller;
-                                }
-                            }
-                        }catch (Exception e){}
-                        try{
-                            if(gamefield[i][z].getId() == gamefield[i][z - 1].getId()){
-                                gamefield[i][z - 1] = gapFiller;
-                                if(gamefield[i][z].getId() == gamefield[i][z - 2].getId()){
-                                    gamefield[i][z - 2] = gapFiller;
-                                }
-                            }
-                        }catch (Exception e){}
-                        gamefield[i][z] = gapFiller;
-                        gamefield[i + 1][z] = gapFiller;
-                        gamefield[i + 2][z] = gapFiller;
+                        cache = verticalLine(i, z, "down");
+                        for(int g = 0; g < cache; g++){
+                            gamefield[i + g][z] = gapFiller;
+                        }
+                        return;
                     }
                 }catch (Exception e){}
+
                 try{
-                    if(gamefield[i][z].getId() == gamefield[i][z + 1].getId() && gamefield[i][z].getId() == gamefield[i][z + 2].getId()){
-                        if(z < gamefield[i].length - 4){
-                            if(gamefield[i][z].getId() == gamefield[i][z + 3].getId()) {
-                                gamefield[i][z + 3] = gapFiller;
-                                if(z < gamefield[i].length - 5){
-                                    if(gamefield[i][z].getId() == gamefield[i][z + 4].getId()){
-                                        gamefield[i][z + 4] = gapFiller;
-                                    }
+                    if(horizontalLine(i, z, "right") > 2) {
+                        try{
+                            if(horizontalLine(i, z, "right") == 5 && verticalLine(i, z + 2, "down") == 3){
+                                for (int g = 0; g < 5; g++){
+                                    gamefield[i][z + g] = gapFiller;
                                 }
+                                gamefield[i + 1][z + 2] = gapFiller;
+                                gamefield[i + 2][z + 2] = gapFiller;
+                                return;
+                            } else if (horizontalLine(i, z, "right") == 3 && verticalLine(i, z + 2, "down") == 3) {
+                                for (int g = 0; g < 3; g++){
+                                    gamefield[i + g][z] = gapFiller;
+                                    gamefield[i][z + g] = gapFiller;
+                                }
+                                return;
                             }
+                        }catch (Exception e){}
+                        cache = horizontalLine(i, z, "right");
+                        for(int g = 0; g < cache; g++){
+                            gamefield[i][z + g] = gapFiller;
                         }
-                        gamefield[i][z] = gapFiller;
-                        gamefield[i][z + 1] = gapFiller;
-                        gamefield[i][z + 2] = gapFiller;
+                        return;
                     }
                 }catch (Exception e){}
             }
         }
     }
 
-    public static void lowerAndFillFields(){
+    public void lowerAndFillFields(){
         Token gapFiller = new Token(-1, " ");
 
         for(int i = 0; i < gamefield.length; i++) {
@@ -316,6 +332,9 @@ public class GameField {
                     for(int g = i; g >= 1; g--){
                         gamefield[g][z] = gamefield[g - 1][z];
                         gamefield[g - 1][z] = gapFiller;
+                        Additional.clearConsole();
+                        printGamefield();
+                        Additional.delay(250);
                     }
                 }
             }
@@ -327,22 +346,24 @@ public class GameField {
                 if(gamefield[i][z].getId() == -1){
                     // Punkte hinzufügen
                     points++;
-
                     gamefield[i][z] = tokens[Additional.random.nextInt(5)];
+                    Additional.clearConsole();
+                    printGamefield();
+                    Additional.delay(250);
                 }
             }
         }
 
     }
 
-    static void updateGamefield(int[] swapField1, int[] swapField2){
+    public void updateGamefield(int[] swapField1, int[] swapField2){
         Token cache;
         cache = gamefield[swapField1[1]][swapField1[0]];
         gamefield[swapField1[1]][swapField1[0]] = gamefield[swapField2[1]][swapField2[0]];
         gamefield[swapField2[1]][swapField2[0]] = cache;
     }
 
-    static void generateRandomGamefield(){
+    public void generateRandomGamefield(){
         int randomNumber = Additional.random.nextInt(4);
 
         for(int i = 0; i < gamefield.length; i++){
@@ -376,7 +397,7 @@ public class GameField {
         }
     }
 
-    static void printGamefield(){
+     public void printGamefield(){
 
         System.out.print("   ");
         for(int i = 0; i < gamefield[0].length; i++){
@@ -398,10 +419,51 @@ public class GameField {
         }
     }
 
-    public static void makeMove(int[] swapField1, int[] swapField2){
+    public Token[][] swapFields(Token[][] field, int i, int z, int g, int h){
+        Token cache;
+        cache = field[i][z];
+        field[i][z] = field[g][h];
+        field[g][h] = cache;
+        return field;
+    }
+
+    public boolean testMovePossible(){
+        Token[][] testGamefield = new Token[gamefield.length][gamefield[0].length];
+        for(int i = 0; i < testGamefield.length; i++) {
+            for (int z = 0; z < testGamefield[0].length; z++) {
+                testGamefield[i][z] = gamefield[i][z];
+            }
+        }
+
+        Token cache;
+        for(int i = 0; i < testGamefield.length; i++){
+            for(int z = 0; z < testGamefield[0].length; z++){
+                try{
+                    testGamefield = swapFields(testGamefield, i, z, i, z + 1);
+                    if(rowOfThree(testGamefield)){
+                        return true;
+                    }
+                    testGamefield = swapFields(testGamefield, i, z, i, z + 1);
+                }catch (Exception e){}
+                try{
+                    testGamefield = swapFields(testGamefield, i, z, i + 1, z);
+                    if(rowOfThree(testGamefield)){
+                        return true;
+                    }
+                    testGamefield = swapFields(testGamefield, i, z, i + 1, z);
+                }catch (Exception e){}
+            }
+        }
+        return false;
+    }
+
+    public void makeMove(int[] swapField1, int[] swapField2){
         updateGamefield(swapField1, swapField2);
-        while(rowOfThree()){
+        while(rowOfThree(gamefield)){
             deleteFields();
+            printGamefield();
+            Additional.clearConsole();
+            Additional.delay(500);
             lowerAndFillFields();
             printGamefield();
         }

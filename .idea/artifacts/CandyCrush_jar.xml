@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CandyCrush:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CandyCrush_jar</output-path>
+    <root id="archive" name="CandyCrush.jar">
+      <element id="module-output" name="CandyCrush" />
+    </root>
+  </artifact>
+</component>

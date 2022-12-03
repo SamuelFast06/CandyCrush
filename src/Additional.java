@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class Additional {
 
@@ -29,20 +30,20 @@ public class Additional {
         return cache;
     }
 
+    public static void delay(int millis){
+        try {
+            TimeUnit.MILLISECONDS.sleep(millis);
+        } catch (InterruptedException e) {
+        }
+    }
+
     static void printExample(){
-        System.out.println("Beispiele für Kombinationsmöglichkeiten. Es geht immer bis maximal eine Länge von 5.");
-        System.out.println(" O  O  O");
-        System.out.println();
-        System.out.println(" O");
-        System.out.println(" O");
-        System.out.println(" O");
-        System.out.println();
-        System.out.println(" O");
-        System.out.println(" O  O  O");
-        System.out.println(" O");
-        System.out.println();
-        System.out.println("       O");
-        System.out.println(" O  O  O  O  O");
+        System.out.println("Beispiele für Kombinationsmöglichkeiten.");
+        System.out.println(" O  O  O           O  O  O     O          O  O  O  O  O");
+        System.out.println("                   O  O  O     O                O      ");
+        System.out.println(" O  O  O  O        O  O  O     O  O  O          O      ");
+        System.out.println("                   O  O                               ");
+        System.out.println(" O  O  O  O  O     O                                  ");
     }
 
     public static char numberToLetter(int number){
@@ -93,15 +94,18 @@ public class Additional {
 
             if (os.contains("Windows"))
             {
-                Runtime.getRuntime().exec("cls");
+                ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "cls");
+                Process startProcess = pb.inheritIO().start();
+                startProcess.waitFor();
             }
             else
             {
-                Runtime.getRuntime().exec("clear");
+                ProcessBuilder pb = new ProcessBuilder("clear");
+                Process startProcess = pb.inheritIO().start();
+                startProcess.waitFor();
             }
         }
-        catch (final Exception e)
-        {}
+        catch (Exception e) {System.out.println(e);}
     }
 
 }

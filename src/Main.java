@@ -21,8 +21,9 @@ public class Main {
 
         gameField.generateRandomGamefield();
 
+        gameField.printGamefield();
         //Hauptschleife solane der Benutzer noch Züge hat
-        while (moves > 0) {
+        while (moves > 0 && gameField.testMovePossible()) {
             //Spielfeld reseten
             Additional.clearConsole();
             //Übriegen Züge und Punkte ausgeben
@@ -35,12 +36,16 @@ public class Main {
                 swapFields1 = gameField.askMove1();
                 swapFields2 = gameField.askMove2();
             } while (!gameField.testMoves(swapFields1, swapFields2));
-
             gameField.makeMove(swapFields1, swapFields2);
 
             moves--;
-
-
+        }
+        Additional.clearConsole();
+        gameField.printGamefield();
+        if(!gameField.testMovePossible()){
+            System.out.println("Es sind keine weiteren Züge möglich. Du hast " + gameField.getPoints() + " bekommen.");
+        }else{
+            System.out.println("Spiel beendet. Du hast " + gameField.getPoints() + " Punkte bekommen.");
         }
     }
 }
